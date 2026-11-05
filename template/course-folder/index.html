@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Security: the course may load files only from its own package and may not
+       connect to any outside website or service. Don't remove this line. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; media-src 'self'; font-src 'self'; connect-src 'none'; frame-src 'none'; object-src 'none'; form-action 'none'; base-uri 'none'">
+  <title>Course</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div id="app" class="app">
+    <main id="main" class="main" tabindex="-1">
+      <p>Loading…</p>
+    </main>
+  </div>
+  <script src="course/settings.js"></script>
+  <script src="course/content.js"></script>
+  <script src="js/scorm-api.js"></script>
+  <script src="js/engine.js"></script>
+</body>
+</html>

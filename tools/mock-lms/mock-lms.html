@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Mock LMS (testing only)</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; display: grid; grid-template-columns: 1fr 420px; height: 100vh; }
+    iframe { width: 100%; height: 100vh; border: 0; }
+    aside { overflow: auto; padding: 10px; background: #f4f4f4; font-size: 13px; border-left: 1px solid #ccc; }
+    table { border-collapse: collapse; width: 100%; } td { border-bottom: 1px solid #ddd; padding: 2px 4px; vertical-align: top; word-break: break-all; }
+    button { margin: 2px; }
+  </style>
+</head>
+<body>
+  <iframe id="course" title="Course"></iframe>
+  <aside>
+    <h2>Mock LMS</h2>
+    <p>Testing only. Data stays in this browser. Add <code>?passing=0.8</code> to simulate a passing score set in the learning system.</p>
+    <button id="relaunch">Relaunch course</button>
+    <button id="reset">Reset learner data</button>
+    <h3>Data the course sent</h3>
+    <table id="data"></table>
+  </aside>
+  <script src="mock-api.js"></script>
+  <script src="mock-lms-ui.js"></script>
+</body>
+</html>
