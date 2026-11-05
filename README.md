@@ -13,5 +13,16 @@ A plain-language toolkit and an unbranded game template for building game-style 
 
 See [CHANGELOG.md](CHANGELOG.md) for the history of changes.
 
+## What may go into this repository (GitHub)
+This repository is stored on GitHub, outside the internal network. **Never upload:**
+- personal information (PII) about students, employees or anyone else;
+- confidential information or anything sensitive to the organization (internal processes, data, reports, credentials, unreleased content);
+- learner data or test records from ADP Learning.
+
+Only unbranded template files, placeholder content and the reference documents listed below belong here. Organization-specific versions of a course are built and stored on the internal network.
+
+## Reference documents
+- [AI Acceptable Use Policy (PDF)](reference/AI_Acceptable_Use_Policy.pdf): the source for every rule in the [policy map](docs/00-policy-map.md). Added with the project owner's approval.
+
 ## Before every commit or push
 Run `tools/check-strip-list.sh` (see the "For IT" note inside the script).

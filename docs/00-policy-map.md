@@ -1,7 +1,7 @@
 # Policy map: where each toolkit rule comes from
 
 **Source:** [ORGANIZATION] IT Policies Manual, *AI Acceptable Use Policy (AI AUP)*, effective January 30, 2026 (last revised and reviewed January 30, 2026).
-**Read the current version:** [POLICY LINK]. Section 11 says each person is "responsible for staying informed about the latest version of the policy." If the policy changes, update this map first, then the documents that cite it.
+**Read the current version:** [POLICY LINK]. A copy is kept in this repository: [reference/AI_Acceptable_Use_Policy.pdf](../reference/AI_Acceptable_Use_Policy.pdf). Section 11 says each person is "responsible for staying informed about the latest version of the policy." If the policy changes, update this map first, then the documents that cite it.
 
 Quotes are the policy's own words. Square brackets mark the only edits: `[ORGANIZATION]` replaces the organization's name, and the Chief Information Officer is named by role only.
 
@@ -26,6 +26,8 @@ Quotes are the policy's own words. Square brackets mark the only edits: `[ORGANI
 | R17 | No paid AI subscriptions without approval. | 10 | "… not reimbursing the cost of any subscription for AI GenAI tools, unless expressly approved by [ORGANIZATION]." |
 | R18 | Questions and suspected violations go to the Chief Information Officer. | 12 | "Users should promptly report any suspected violations of this AUP … to [the Chief Information Officer]." |
 | R19 | Students follow a separate AI policy. | 1 | "The students of [ORGANIZATION] are subject to their separate AI AUP." |
+
+| R20 | No PII, confidential or sensitive organization content in GitHub. | Project rule (supports 6, 8) | *Not policy wording.* Project owner's decision: the toolkit repository holds only unbranded templates, placeholders and reference documents. |
 
 ## Open questions for the Chief Information Officer (not decided by this toolkit)
 

@@ -10,11 +10,13 @@ if [ ! -f .strip-terms.txt ]; then
   exit 2
 fi
 found=0
-files=$(git ls-files --cached --others --exclude-standard)
+# reference/ holds the policy PDF, which is kept as-is with the project
+# owner's approval, so it is skipped here.
+files=$(git ls-files --cached --others --exclude-standard | grep -v '^reference/')
 while IFS= read -r term; do
   [ -z "$term" ] && continue
   if hits=$(printf '%s\n' $files | xargs -r grep -n -i -F -- "$term" 2>/dev/null); then
     echo "FOUND \"$term\":"; echo "$hits"; found=1
   fi
 done < .strip-terms.txt
-if [ $found -eq 0 ]; then echo "Strip-list check: clean"; else exit 1; fi
+if [ $found -eq 0 ]; then echo "Strip-list check: clean (reference/ skipped)"; else exit 1; fi
