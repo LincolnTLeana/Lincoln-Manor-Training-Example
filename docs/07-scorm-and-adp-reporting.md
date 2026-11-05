@@ -56,18 +56,12 @@ Earlier versions of this kind of game could send results to an outside spreadshe
 ---
 
 ## Building the question-level report in ADP Learning (once, then share it)
-Answers to individual questions are pulled with **ADP Learning → Reports Manager → create a custom report.**
-
-> Menu names below may differ slightly in your ADP version. Where a step says *[confirm]*, check the label with HR Learning & Development the first time, then correct this guide.
-
-1. In ADP Learning, open **Reports Manager**.
-2. Choose **Create custom report** (or **New report**).
-3. Pick the data source for **course or SCORM interaction results** *[confirm the exact name: it may be "Learning Activity Interactions" or similar]*.
-4. Add a **filter**: course = your course's title or ID (from `settings.js` → `courseId`).
-5. Add the **fields** below.
-6. **Save** with a clear name, for example `[COURSE ID] – question responses`.
-7. **Share** the saved report with the people who need it, using ADP's sharing or permissions *[confirm]*. Share the *report*, not exported files, so access stays inside ADP and follows ADP permissions.
-8. Check it with test data from your private test folder ([Testing in ADP Learning](08-testing-in-adp-learning.md)) before launch.
+Answers to individual questions are pulled with **ADP Learning → Reports Manager → create a custom report.** Follow your organization's ADP Learning reporting resource for the exact steps. In short:
+1. Create a custom report on **course or SCORM interaction results**, filtered to your course (its title, or `courseId` from `settings.js`).
+2. Add the fields below.
+3. **Save** it with a clear name, for example `using-ai-safely – question responses`.
+4. **Share the saved report** with the people who need it, rather than exporting files, so access stays inside ADP.
+5. Check it with test data from your private test folder ([Testing in ADP Learning](08-testing-in-adp-learning.md)) before launch.
 
 ### Fields to include
 | Group | Fields |
@@ -92,4 +86,4 @@ Exported reports contain **personal information**. They follow the AI policy (R6
 7. Report a suspected data leak right away, following the information security policy.
 
 ## Optional outside reporting
-**Not included, and not supported.** The template has no code for sending data anywhere except ADP Learning. Any request for outside reporting goes to **[REVIEWER ROLE]** and IT security, and must comply with the AI policy.
+**Not included, and not supported.** The template has no code for sending data anywhere except ADP Learning. Any request for outside reporting goes to **the Training and Development reviewer** and IT security, and must comply with the AI policy.

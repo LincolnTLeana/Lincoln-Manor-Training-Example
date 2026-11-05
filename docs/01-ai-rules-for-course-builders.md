@@ -1,12 +1,12 @@
 # AI rules for course builders (one page)
 
-*For anyone at [ORGANIZATION] who uses AI to help build training. The rule numbers (R1, R2 …) match the [policy map](00-policy-map.md), which quotes the AI Acceptable Use Policy word for word.*
+*For anyone at our organization who uses AI to help build training. The rule numbers (R1, R2 …) match the [policy map](00-policy-map.md), which quotes the AI Acceptable Use Policy word for word.*
 
 ## Four rules to remember
 1. **Use Microsoft Copilot, on a work device, signed in with your work email.** (R1, R4) Look for the **Protected** label (shield icon) before you paste anything. Other tools need approval from the Chief Information Officer first (R3).
 2. **Internal documents may go into Copilot, and only Copilot.** (R21) **Personal information never goes into any AI tool.** (R6, R8)
 3. **A person checks every output.** (R9) If you can't confirm something is correct, your manager approves it before it's used.
-4. **Say when AI helped.** Published training includes a line such as "Created with help from AI tools and reviewed by [TEAM]." (R10)
+4. **Say when AI helped.** Published training includes a line such as "Created with help from AI tools and reviewed by the Training and Development team." (R10)
 
 ## OK in Copilot / never paste
 

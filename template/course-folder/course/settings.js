@@ -11,7 +11,7 @@ window.COURSE_SETTINGS = {
   version: "1.0.0",
 
   // Title shown on the start screen and the browser tab.
-  courseTitle: "[COURSE TITLE]",
+  courseTitle: "Using AI Safely at Work",
 
   // Which look to use: the name of a folder inside "themes".
   // Included: "manor" (mystery house) and "workshop" (trades).

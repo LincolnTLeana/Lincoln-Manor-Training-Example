@@ -43,7 +43,7 @@ window.COURSE_THEME = {
     hubBackground: "images/hub-bg.svg",
     roomBackground: "images/room-bg.svg",
     logo: "images/logo-placeholder.svg",
-    logoAlt: "[ORGANIZATION] logo",
+    logoAlt: "Organization logo",
     badge: "images/badge.svg",
     badgeAlt: "Safety seal",
     egg: "images/egg.svg"

@@ -14,10 +14,10 @@
 
 .NOTES
     FOR IT
-    - Sign this script with the organization's code-signing certificate before you
-      publish it on the network share. Do not tell users to bypass the PowerShell
-      execution policy: the AI Acceptable Use Policy (Section 4) and the security
-      policies forbid getting around security controls.
+    - Windows may block scripts, depending on how PowerShell's execution policy is
+      set on the computer. If it runs, nothing else is needed. If Windows blocks it,
+      ask IT to allow or sign it. Do not bypass the execution policy: the AI
+      Acceptable Use Policy (Section 4) forbids getting around security controls.
     - The script reads only the chosen course folder, writes only to the output
       folder and the user's temp folder, and makes no network calls.
     - Settings you may change are in the "Settings" block below.
@@ -32,7 +32,7 @@ Set-StrictMode -Version 2.0
 $ErrorActionPreference = 'Stop'
 
 # ----------------------------- Settings ------------------------------------
-$MaxPackageMB      = 100   # [CONFIRM THE ADP LEARNING SIZE LIMIT WITH L&D]
+$MaxPackageMB      = 100   # Change this if ADP Learning's upload limit is different
 $BlockedExtensions = @('.docx','.doc','.xlsx','.xls','.csv','.pptx','.ppt','.log',
                        '.ps1','.cmd','.bat','.exe','.msi','.zip','.msg','.pst','.one')
 $SkipNames         = @('Thumbs.db','desktop.ini','.DS_Store')
@@ -146,10 +146,13 @@ foreach ($item in $included) {
         $Warnings.Add("$($item.Rel) contains the email address $($e.Value). Check that it is a shared support address, not a person's own email.")
     }
 
-    # Placeholders that were never filled in.
+    # Placeholders and made-up sample contacts that were never replaced.
     if ($item.Rel -like 'course/*' -or $item.Rel -like 'themes/*') {
         $left = @([regex]::Matches($text, '\[[A-Z][A-Z0-9 _&/-]{2,}\]') | ForEach-Object { $_.Value } | Select-Object -Unique)
-        if ($left.Count -gt 0) { $Warnings.Add("$($item.Rel) still has placeholders: $($left -join ', ')") }
+        if ($left.Count -gt 0) { $Warnings.Add("$($item.Rel) has text in [BRACKETS]: $($left -join ', '). Check each one is meant to be there.") }
+        if ($text -match 'example\.org|555-01\d\d|Course Designer|Subject Expert Team|Your logo here') {
+            $Warnings.Add("$($item.Rel) still has made-up sample details (example.org, 555-01xx, sample names or logo). Replace them with real ones.")
+        }
     }
 }
 

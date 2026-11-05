@@ -47,7 +47,7 @@ The finished game was turned into this **template**: all words in `content.js`, 
 The **packaging tool** checks the folder (no outside calls, no data files, no leftover placeholders) and builds the ZIP with the version in its name.
 
 ## 7. ADP Learning
-1. **Security review** of the ZIP by [REVIEWER ROLE].
+1. **Security review** of the ZIP by the Training and Development reviewer.
 2. **HR L&D** uploads it to a private test folder.
 3. **Testing** with the checklist: completion, score, resume, each answer recorded, links and media inside the player, keyboard and screen reader, phone.
 4. **Fix → new version → re-upload,** until clean.

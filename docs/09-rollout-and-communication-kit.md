@@ -21,17 +21,17 @@
 >
 > **Please complete it by [DATE].**
 >
-> **Where:** ADP Learning → [CATALOG OR MY LEARNING PATH]
-> **Technical problems** (won't open, progress not saved): [HELPDESK CONTACT]
-> **Questions about the content:** [LEARNING CENTER CONTACT]
+> **Where:** ADP Learning → My Learning
+> **Technical problems** (won't open, progress not saved): IT Helpdesk (helpdesk@example.org, 555-0100)
+> **Questions about the content:** Learning Center (learningcenter@example.org)
 >
 > Thank you,
-> [SENDER NAME]
+> Training and Development team
 
 ## Reminder email
 **Subject:** Reminder: [COURSE TITLE] due [DATE]
 
-> Hi [NAME/TEAM], a quick reminder that **[COURSE TITLE]** is due on [DATE]. If you started already, open it in ADP Learning and choose **Continue** to pick up where you left off. Need help? Technical issues: [HELPDESK CONTACT]. Content questions: [LEARNING CENTER CONTACT].
+> Hi [NAME/TEAM], a quick reminder that **[COURSE TITLE]** is due on [DATE]. If you started already, open it in ADP Learning and choose **Continue** to pick up where you left off. Need help? Technical issues: IT Helpdesk (helpdesk@example.org, 555-0100). Content questions: Learning Center (learningcenter@example.org).
 
 ## Manager talking points
 1. **What:** a short, game-style course in ADP Learning: [COURSE TITLE].
@@ -51,14 +51,14 @@
 | Is there music? | Optional. It starts off; use the Music button. |
 | I finished, but it says In progress. | Make sure every room shows **Complete**, then contact the Helpdesk. |
 | A link won't open. | Some pages need you to sign in. Try opening it in a new browser window; if it still fails, tell the Helpdesk which link. |
-| I need an accessible format. | Contact [LEARNING CENTER CONTACT]. |
+| I need an accessible format. | Contact Learning Center (learningcenter@example.org). |
 | Was AI used to make this? | Yes, AI tools helped draft it, and people reviewed every part. |
 
 ## Support routing
 | Issue | Goes to |
 |---|---|
-| Course won't open, freezes, progress or completion not saved, ADP access | **Helpdesk** [HELPDESK CONTACT] |
-| Questions about the content, accessibility requests, suggestions | **Learning Center** [LEARNING CENTER CONTACT] |
+| Course won't open, freezes, progress or completion not saved, ADP access | **Helpdesk** IT Helpdesk (helpdesk@example.org, 555-0100) |
+| Questions about the content, accessibility requests, suggestions | **Learning Center** Learning Center (learningcenter@example.org) |
 | Errors in the course content | Learning Center → course owner |
 | Reporting and data requests | Course owner (shared ADP report) |
 

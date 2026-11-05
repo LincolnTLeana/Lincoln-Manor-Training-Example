@@ -15,9 +15,9 @@
   </metadata>
   <organizations default="org_1">
     <organization identifier="org_1">
-      <title>[COURSE TITLE]</title>
+      <title>Using AI Safely at Work</title>
       <item identifier="item_1" identifierref="res_1">
-        <title>[COURSE TITLE]</title>
+        <title>Using AI Safely at Work</title>
       </item>
     </organization>
   </organizations>

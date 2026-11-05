@@ -31,7 +31,7 @@
 4. **Review and fix (3 min).** Ask for one fix: *"Question 2 has two right answers. Rewrite choice C so only B is correct."* Point out that you changed one thing only.
 5. **Update the content file (3 min).** In Notepad, open `course/content.js`, find `room2_q1`, paste the new question text over the old, save, and refresh the browser. Show **Content check (0)**.
    - Bonus: change `theme: "manor"` to `theme: "workshop"` in `settings.js` and refresh. Same content, new look.
-6. **Package (1 min, talk-through).** Show the packaging guide: double-click **Build Course Package**, choose the folder, read the report. *(Don't run it live until it's been tested and signed by IT.)*
+6. **Package (1 min, talk-through).** Explain that builders send their course folder to the Training and Development reviewer, who runs the packaging tool and does the security review. *(Don't run the tool live until it has been tried on a staff PC.)*
 7. **Test in ADP (1 min, talk-through).** Explain the private test folder and the testing checklist. If you show ADP, use the test learner only.
 
 **If Copilot gives a different answer than expected:** that's a teaching moment. Review it together the same way.

@@ -5,8 +5,8 @@
 |---|---|
 | **Subject expert** | Accurate content. Course builders should be subject experts, or work with one. |
 | **Compliance reviewer** | Required wording, policy alignment, AI disclosure |
-| **Course builder** | Editing the template, previewing, packaging, ADP testing, change log |
-| **[REVIEWER ROLE]** (Training and Development) | **Security review of every package** before upload to ADP Learning, and of any change to the template's code |
+| **Course builder** | Editing the template, previewing, sending the course folder for packaging, ADP testing, change log |
+| **Training and Development reviewer** | **Packages every course** with the packaging tool, and does the **security review** before upload to ADP Learning, including any change to the template's code |
 | **HR Learning & Development** | Uploads to ADP, test folders, enrollment, catalog |
 | **Technical staff** | Changes to code, layouts or game mechanics (approved tools only) |
 | **Course owner** | Maintenance after launch: fixes, yearly review, reports |
@@ -16,8 +16,8 @@
 1. **Plan:** course owner and subject expert agree the outcomes.
 2. **Draft:** builder drafts with Copilot (AI rules), then the subject expert corrects.
 3. **Review:** compliance checks wording. If anyone can't verify an AI-drafted fact, **their manager approves it before use** (AI policy, Section 7).
-4. **Build and package** with the packaging tool.
-5. **Security review** by [REVIEWER ROLE]: packaging report, hand-off form, and any code changes.
+4. **Send the course folder** and hand-off form to the Training and Development reviewer.
+5. **Package and security review** by the reviewer: packaging report, hand-off form, and any code changes.
 6. **Test in ADP** (private folder), then fix and repeat.
 7. **Launch** with the rollout kit.
 8. **Maintain:** the owner reviews at least yearly, or when a policy changes (AI policy Section 11: stay current).
@@ -26,16 +26,14 @@
 
 ## Disclosing AI help
 AI policy Section 7 requires disclosure when work is **published, evaluated or used for decisions**. For courses:
-- Keep a line in the Credits window: *"Created with help from AI tools and reviewed by [TEAM]."*
+- Keep a line in the Credits window: *"Created with help from AI tools and reviewed by the Training and Development team."*
 - Note the AI tools used on the hand-off form.
 - No disclosure is needed for spell-checks, formatting or brainstorming.
 
-## Images, video and audio of real people: consent
-- **Get written consent** before using any photo, video or voice recording of a real, identifiable person, including staff and students. Use the organization's official release form from **HR / Legal / Marketing [CONFIRM WHICH]**. This toolkit doesn't supply one.
-- The consent must cover **use in training, in ADP Learning, for as long as the course is live**, and say how a person can withdraw.
-- **Students:** extra care. Their images may be part of education records, so confirm with the **Registrar / compliance** before use.
-- **Keep the signed forms** where the release-form owner says, not in the course folder or the ZIP.
-- **If someone withdraws consent,** remove them in the next version.
+## Images, video and audio of real people
+- **Ask first.** Before you feature a real, identifiable person (staff or students), ask them, and tell them it will be used in training in ADP Learning. If they say no, don't use it.
+- **Students:** take extra care, and check with compliance before featuring a student.
+- **If someone later asks to be removed,** take them out in the next version.
 - **Never** create AI-generated images, video or voices of real people, or edit someone's image to change what they appear to say or do (AI policy Sections 3, 4 and 7: no deepfakes).
 
 ## Licensing of images, music and fonts
@@ -55,5 +53,5 @@ The policy forbids "infringing on intellectual property or violating copyrights"
 ## Ownership and maintenance after launch
 - **Name a course owner** before launch, plus a backup.
 - **Keep the course folder** (the source) on the internal network with its change log, the latest hand-off form and test notes.
-- **Review triggers:** policy change, process change, broken link, helpdesk trend, or yearly review date [DATE].
+- **Review triggers:** policy change, process change, broken link, helpdesk trend, or the yearly review.
 - **Retire** a course with HR L&D when it's no longer needed. Keep its source and records per the retention schedule.

@@ -3,10 +3,10 @@
 *Every course is tested **inside ADP Learning** before rollout. A course can pass on your computer and still behave differently in ADP's player.*
 
 ## How testing works
-1. **Build** the ZIP with the packaging tool ([Packaging guide](12-packaging-guide.md)) and send it for **security review** ([REVIEWER ROLE]).
+1. **Send your course folder** to the Training and Development reviewer, who **packages** it and does the **security review** ([Packaging guide](12-packaging-guide.md)).
 2. **HR Learning & Development** uploads it to a **catalog folder only you can see**.
 3. **You test** using the checklist below and take notes ([test notes template](templates/test-notes-template.md)).
-4. **Fix** anything in your course folder, **raise the version**, re-package and send the new ZIP for review and re-upload.
+4. **Fix** anything in your course folder, **raise the version**, and send the folder again for packaging and re-upload.
 5. Repeat until every check passes. Then HR L&D moves it to the real catalog for rollout.
 
 **Do not use public test sites** (for example SCORM Cloud) for anything containing organization content. If you want to try SCORM Cloud, use only the **unbranded template as it ships**, before any organization-specific information is added.
@@ -53,7 +53,7 @@ Use a **test learner account**, not your own record, if HR L&D can provide one. 
 - [ ] Course opens in ADP's mobile app or a phone browser; no sideways scrolling; buttons are easy to tap
 
 ### Content
-- [ ] No placeholders left (`[LIKE THIS]`); help contacts and credits are right
+- [ ] No made-up sample details left (example.org, 555-0100, "Course Designer"); help contacts and credits are right
 - [ ] AI-assistance line present (if AI helped)
 - [ ] Subject expert and compliance sign-off recorded on the hand-off form
 

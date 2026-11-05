@@ -29,7 +29,10 @@ async function newPage(browser, opts = {}) {
     outside.push(u.href); return route.abort();
   });
   const page = await ctx.newPage();
-  page.on('pageerror', (e) => { failures++; console.log('  FAIL page error: ' + e.message); });
+  page.on('pageerror', (e) => {
+    if (opts.expectError) { console.log('  (expected error from the deliberate typo: ' + e.message + ')'); return; }
+    failures++; console.log('  FAIL page error: ' + e.message);
+  });
   return page;
 }
 
@@ -52,10 +55,10 @@ async function playRoom(f, roomName, mode) {
     if (await radios.count()) {
       const all = content.rooms.concat(content.bonusRooms);
       let q; all.forEach((r) => (r.questions || []).forEach((x) => { if (x.prompt === h1) q = x; }));
-      let pick = q.correct;
+      let pick = q.survey ? q.choices[0].id : q.correct;
       if (mode === 'wrongFirst' && q.id.endsWith('_q1')) pick = q.choices.find((c) => c.id !== q.correct).id;
       await f.locator(`input[value="${pick}"]`).check();
-      await click(f, 'Check answer');
+      await f.locator('form.question button[type=submit]').click();
     }
     await f.locator('nav .btn.primary').click();
   }
@@ -68,13 +71,22 @@ async function playRoom(f, roomName, mode) {
   const content = require('vm').runInNewContext(fs.readFileSync(path.join(__dirname, '../../template/course-folder/course/content.js'), 'utf8') + ';window.COURSE_CONTENT', { window: {} });
   const theme = require('vm').runInNewContext(fs.readFileSync(path.join(__dirname, '../../template/course-folder/themes/manor/theme.js'), 'utf8') + ';window.COURSE_THEME', { window: {} });
   const names = content.rooms.map((r) => theme.rooms[r.id].name);
-  const total = content.rooms.reduce((a, r) => a + r.questions.length, 0);
+  const total = content.rooms.reduce((a, r) => a + r.questions.filter((q) => !q.survey).length, 0);
+  const scored = (c) => Object.keys(c).filter((k) => /^cmi\.interactions\.\d+\.weighting$/.test(k) && c[k] === '1').length;
+  // Start button, then answer (or skip) the start survey.
+  async function enter(f, label, answerSurvey) {
+    await click(f, label);
+    if ((await f.locator('main h1').first().textContent()).trim() === 'Your starting point') {
+      if (answerSurvey) { await f.locator('input[value="beginner"]').check(); await click(f, 'Send answer'); }
+      else await click(f, 'Skip');
+    }
+  }
 
   console.log('\n1. Perfect run, bonus room, survey, save & exit');
   let page = await newPage(browser);
   await page.goto(LMS); await page.evaluate(() => MockLms.reset()); await page.goto(LMS);
   let f = await waitCourse(page);
-  await click(f, 'Enter the manor');
+  await enter(f, 'Enter the manor', true);
   let c = await cmi(page);
   check('status is incomplete after launch', c['cmi.completion_status'] === 'incomplete', c['cmi.completion_status']);
   for (let i = 0; i < names.length; i++) {
@@ -91,20 +103,24 @@ async function playRoom(f, roomName, mode) {
   check('score scaled 1', c['cmi.score.scaled'] === '1', c['cmi.score.scaled']);
   check('no pass/fail when passingPercent is null', c['cmi.success_status'] === 'unknown', c['cmi.success_status']);
   check('progress_measure 1', c['cmi.progress_measure'] === '1', c['cmi.progress_measure']);
-  check(`${total} interactions recorded`, c['cmi.interactions._count'] === String(total), c['cmi.interactions._count']);
-  const i0 = (k) => c['cmi.interactions.0.' + k];
-  check('interaction fields complete', i0('id') === 'room1_q1' && i0('type') === 'choice' && i0('learner_response') === 'b' && i0('correct_responses.0.pattern') === 'b' && i0('result') === 'correct' && i0('weighting') === '1' && /^\d{4}-\d\d-\d\dT/.test(i0('timestamp')) && /^PT/.test(i0('latency')) && i0('description') === 'What is a prompt?' && i0('objectives.0.id') === 'room1', Object.keys(c).filter((k) => k.startsWith('cmi.interactions.0.')).map((k) => k + '=' + c[k]));
+  check(`${total} scored answers recorded`, scored(c) === total, scored(c));
+  const sid = (id) => Object.keys(c).find((k) => /interactions\.\d+\.id$/.test(k) && c[k] === id);
+  check('start survey answer recorded (neutral, weight 0)', sid('survey_familiarity') && c[sid('survey_familiarity').replace('.id', '.result')] === 'neutral' && c[sid('survey_familiarity').replace('.id', '.learner_response')] === 'beginner');
+  check('in-room survey answer recorded (neutral, weight 0, with room)', sid('survey_confidence') && c[sid('survey_confidence').replace('.id', '.weighting')] === '0' && c[sid('survey_confidence').replace('.id', '.objectives.0.id')] === 'room3');
+  const q1 = Object.keys(c).find((k) => /interactions\.\d+\.id$/.test(k) && c[k] === 'room1_q1').replace('.id', '.');
+  const i0 = (k) => c[q1 + k];
+  check('interaction fields complete', i0('id') === 'room1_q1' && i0('type') === 'choice' && i0('learner_response') === 'b' && i0('correct_responses.0.pattern') === 'b' && i0('result') === 'correct' && i0('weighting') === '1' && /^\d{4}-\d\d-\d\dT/.test(i0('timestamp')) && /^PT/.test(i0('latency')) && i0('description') === 'What is a prompt?' && i0('objectives.0.id') === 'room1', Object.keys(c).filter((k) => k.startsWith(q1)).map((k) => k + '=' + c[k]));
   check('4 room objectives completed', ['0', '1', '2', '3'].every((i) => c[`cmi.objectives.${i}.completion_status`] === 'completed') && c['cmi.objectives._count'] === '4', c['cmi.objectives._count']);
   await click(f, 'See your results');
   const finishText = await f.locator('main').innerText();
   check('finish screen shows score', finishText.includes(`Score: ${total} of ${total}`));
   check('finish screen shows perfect message', finishText.includes('secret room'));
   // survey
-  await f.locator('input[value="intermediate"]').check(); await f.locator('input[value="yes"]').check();
-  await click(f, 'Send answers');
+  await f.locator('input[name="survey_badges"][value="yes"]').check(); await f.locator('input[name="survey_interest"][value="yes"]').check();
+  await click(f, 'Send answer');
   c = await cmi(page);
   const sv = Object.keys(c).filter((k) => /interactions\.\d+\.id$/.test(k) && c[k].startsWith('survey_'));
-  check('survey answers recorded as neutral interactions', sv.length === 2 && sv.every((k) => c[k.replace('.id', '.result')] === 'neutral' && c[k.replace('.id', '.weighting')] === '0'), sv.map((k) => c[k]));
+  check('all 4 survey answers (start, room, end) recorded as neutral', sv.length === 4 && sv.every((k) => c[k.replace('.id', '.result')] === 'neutral' && c[k.replace('.id', '.weighting')] === '0'), sv.map((k) => c[k]));
   check('survey did not change the score', c['cmi.score.raw'] === String(total));
   // bonus room
   await click(f, 'Review rooms');
@@ -153,7 +169,7 @@ async function playRoom(f, roomName, mode) {
   page = await newPage(browser);
   await page.goto(LMS + '?learner=b'); await page.evaluate(() => MockLms.reset()); await page.goto(LMS + '?learner=b');
   f = await waitCourse(page);
-  await click(f, 'Enter the manor');
+  await enter(f, 'Enter the manor', false);
   await playRoom(f, names[0], 'wrongFirst');
   await click(f, 'Back to the Grand Hall');
   // stop part-way through room 2
@@ -185,7 +201,7 @@ async function playRoom(f, roomName, mode) {
   page = await newPage(browser);
   await page.goto(LMS + '?learner=c&passing=0.95'); await page.evaluate(() => MockLms.reset()); await page.goto(LMS + '?learner=c&passing=0.95');
   f = await waitCourse(page);
-  await click(f, 'Enter the manor');
+  await enter(f, 'Enter the manor', false);
   for (let i = 0; i < names.length; i++) { await playRoom(f, names[i], i === 0 ? 'wrongFirst' : 'correct'); if (i < names.length - 1) await click(f, 'Back to the Grand Hall'); }
   c = await cmi(page);
   check('11/12 below 95% -> failed', c['cmi.success_status'] === 'failed', c['cmi.success_status']);
@@ -196,7 +212,7 @@ async function playRoom(f, roomName, mode) {
   for (let i = 0; i < names.length; i++) { await playRoom(f, names[i], 'correct'); await click(f, 'Back to the Grand Hall'); }
   c = await cmi(page);
   check('retry with 12/12 -> passed', c['cmi.success_status'] === 'passed' && c['cmi.score.scaled'] === '1', [c['cmi.success_status'], c['cmi.score.scaled']]);
-  check('both attempts kept in interactions', c['cmi.interactions._count'] === String(total * 2), c['cmi.interactions._count']);
+  check('both attempts kept in interactions', scored(c) === total * 2, scored(c));
   await click(f, 'Start over'); await f.locator('dialog').getByRole('button', { name: 'Yes, start over' }).click();
   for (let i = 0; i < names.length; i++) { await playRoom(f, names[i], 'wrongFirst'); if (i < names.length - 1) await click(f, 'Back to the Grand Hall'); }
   c = await cmi(page);
@@ -207,7 +223,7 @@ async function playRoom(f, roomName, mode) {
   const baseSettings = fs.readFileSync(path.join(__dirname, '../../template/course-folder/course/settings.js'), 'utf8');
   page = await newPage(browser, { settings: baseSettings.replace('passingPercent: null', 'passingPercent: 80') });
   await page.goto(LMS + '?learner=d'); await page.evaluate(() => MockLms.reset()); await page.goto(LMS + '?learner=d');
-  f = await waitCourse(page); await click(f, 'Enter the manor');
+  f = await waitCourse(page); await enter(f, 'Enter the manor', false);
   for (let i = 0; i < names.length; i++) { await playRoom(f, names[i], 'wrongFirst'); if (i < names.length - 1) await click(f, 'Back to the Grand Hall'); }
   c = await cmi(page);
   const sc = +c['cmi.score.scaled'];
@@ -217,7 +233,7 @@ async function playRoom(f, roomName, mode) {
   console.log('\n6. Workshop theme is a one-line switch');
   page = await newPage(browser, { settings: baseSettings.replace('theme: "manor"', 'theme: "workshop"') });
   await page.goto(LMS + '?learner=e'); await page.evaluate(() => MockLms.reset()); await page.goto(LMS + '?learner=e');
-  f = await waitCourse(page); await click(f, 'Clock in');
+  f = await waitCourse(page); await enter(f, 'Clock in', false);
   const hub = await f.locator('main').innerText();
   check('workshop room names shown', hub.includes('CNC & Welding') && hub.includes('Shop Floor'), hub.slice(0, 200));
   await page.close();
@@ -229,7 +245,7 @@ async function playRoom(f, roomName, mode) {
     .replace('  rooms: [', '  rooms: [' + JSON.stringify(Object.assign({}, extra, { id: 'room5', title: 'Extra room', questions: extra.questions.map((q) => Object.assign({}, q, { id: q.id.replace('room1', 'room5') })) })) + ',');
   page = await newPage(browser, { content: added });
   await page.goto(LMS + '?learner=f'); await page.evaluate(() => MockLms.reset()); await page.goto(LMS + '?learner=f');
-  f = await waitCourse(page); await click(f, 'Enter the manor');
+  f = await waitCourse(page); await enter(f, 'Enter the manor', false);
   check('hub shows 5 rooms', (await f.locator('main').innerText()).includes('0 of 5 rooms complete'));
   await playRoom(f, 'Extra room', 'correct'); await click(f, 'Back to the Grand Hall');
   for (let i = 0; i < names.length; i++) { await playRoom(f, names[i], 'correct'); if (i < names.length - 1) await click(f, 'Back to the Grand Hall'); }
@@ -251,6 +267,13 @@ async function playRoom(f, roomName, mode) {
   await page.goto(`${BASE}/template/course-folder/index.html`); await page.waitForSelector('main h1');
   const issues = await page.evaluate(() => CourseEngine.checkContent());
   check('content check catches a wrong answer key and a bad unlock rule', issues.some((t) => t.includes('"z"')) && issues.some((t) => t.includes('egg:missing')), issues);
+  await page.close();
+
+  const typo = fs.readFileSync(path.join(__dirname, '../../template/course-folder/course/content.js'), 'utf8').replace('heading: "Welcome",', 'heading: "Welcome"');
+  page = await newPage(browser, { content: typo, expectError: true });
+  await page.goto(`${BASE}/template/course-folder/index.html`); await page.waitForSelector('main h1');
+  const msg = await page.locator('main').innerText();
+  check('a typing mistake shows a plain message naming the file', msg.includes('typing mistake') && msg.includes('course/content.js'), msg.slice(0, 200));
   await page.close();
 
   console.log('\n9. Opening index.html straight from a folder (double-click preview)');

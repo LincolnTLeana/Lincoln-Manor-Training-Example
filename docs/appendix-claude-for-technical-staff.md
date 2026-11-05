@@ -15,5 +15,5 @@
 4. **One change per request.** Run `node tools/test/run-tests.js` after every change; read the code diff yourself.
 5. **No outside calls:** never add code that contacts a website or service. The packaging tool and the Content Security Policy enforce this.
 6. **Keep a change log** and update the version.
-7. **Security review** by [REVIEWER ROLE] of every code change before any package goes to ADP Learning.
+7. **Security review** by the Training and Development reviewer of every code change before any package goes to ADP Learning.
 8. Code is verified before deployment (Section 3: "develop or debug code, verify before deployment").

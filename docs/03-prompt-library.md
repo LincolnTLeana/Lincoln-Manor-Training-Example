@@ -89,8 +89,8 @@ use, screen reader, mobile. Format as a checklist with one line per check.
 ```
 Draft a 120-word announcement email to [AUDIENCE] about a new game-style course, [COURSE TITLE].
 Include: why it matters, how long it takes ([MINUTES] minutes), the due date [DATE], where to
-find it (ADP Learning), and who to contact: technical issues → [HELPDESK], content questions →
-[LEARNING CENTER]. Friendly, plain language.
+find it (ADP Learning), and who to contact: technical issues → IT Helpdesk, content questions →
+Learning Center. Friendly, plain language.
 ```
 ```
 Draft a 70-word reminder email for learners who haven't finished [COURSE TITLE] by [DATE].

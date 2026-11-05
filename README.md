@@ -1,6 +1,6 @@
 # Gamified training toolkit
 
-A plain-language toolkit and an unbranded game template for building game-style training with approved AI tools, following [ORGANIZATION]'s AI Acceptable Use Policy.
+A plain-language toolkit and an unbranded game template for building game-style training with approved AI tools, following our organization's AI Acceptable Use Policy.
 
 ## Documents
 | # | Document | What it's for |
@@ -24,10 +24,10 @@ A plain-language toolkit and an unbranded game template for building game-style 
 Word copies of every document are in `exports/word/`.
 
 ## Game template
-[`template/`](template/README.md): a working, unbranded SCORM 2004 (4th Edition) course. Content, settings and themes are plain text files; two sample themes (manor and trades workshop). Tested with 52 automated checks against a mock LMS (`node tools/test/run-tests.js`).
+[`template/`](template/README.md): a working, unbranded SCORM 2004 (4th Edition) course. Content, settings and themes are plain text files; two sample themes (manor and trades workshop). Tested with 55 automated checks against a mock LMS (`node tools/test/run-tests.js`).
 
 ## Tools
-- `tools/packaging/`: packaging tool for Windows (not yet run on a Windows PC)
+- `tools/packaging/`: packaging tool for Windows, run by the Training and Development reviewer (not yet run on a Windows PC)
 - `tools/mock-lms/`, `tools/test/`: mock learning system and automated tests (for IT)
 - `tools/check-strip-list.sh`: pre-commit check for words that must never be committed
 

@@ -150,8 +150,32 @@ How scoring works:
 
 See the [SCORM and ADP reporting guide](07-scorm-and-adp-reporting.md) for the full list of data.
 
-## 8. Optional survey
-`survey:` asks unscored questions at the end, such as "How familiar were you with this topic?". The answers go to ADP Learning as answers with no right or wrong. **Never ask for names, emails or personal details:** ADP already knows who the learner is. To turn it off: `show: false`.
+## 8. Survey questions (start, inside rooms, end)
+Survey questions have no right or wrong answer and **never affect the score**. Answers go to ADP Learning with the other answers (marked "neutral," weight 0), so they appear in the same report. You can put them in three places:
+
+| Where | In `content.js` | Example |
+|---|---|---|
+| **At the start** (once, after Start; learners can skip) | `startSurvey: { show: true, questions: [ … ] }` | "How familiar are you with Microsoft Copilot?" |
+| **Inside any room** (as one of its questions) | a question with `survey: true` | "How confident do you feel checking AI output?" |
+| **At the end** (on the finish screen) | `survey: { show: true, questions: [ … ] }` | "Would you like to earn digital badges for future trainings?" |
+
+**A survey question inside a room:** add `survey: true`, and leave out `correct` and the feedback lines. `thanks` is optional.
+```js
+{
+  id: "survey_confidence",
+  survey: true,
+  prompt: "How confident do you feel checking an AI tool's output?",
+  choices: [
+    { id: "1", text: "Not yet confident" },
+    { id: "2", text: "Somewhat confident" },
+    { id: "3", text: "Confident" }
+  ],
+  thanks: "Thanks! Your answer helps us improve this training."
+}
+```
+- Every survey question needs its own `id`, starting with `survey_` so it's easy to find in reports.
+- **Turn off** the start or end survey with `show: false`. **Remove** a survey question by deleting its block.
+- **Never ask for names, emails or personal details.** ADP Learning already knows who the learner is.
 
 ## 9. Room names
 Room names come from the **theme file**, so a new theme can rename every room at once. See the [Theme and design guide](06-theme-and-design-guide.md). The `title:` in `content.js` is a fallback, used only when the theme has no name for that room.
@@ -162,11 +186,11 @@ Room names come from the **theme file**, so a new theme can rename every room at
 help: {
   heading: "Need help?",
   contacts: [
-    { label: "Technical problems", detail: "[HELPDESK NAME] - [HELPDESK PHONE] - [HELPDESK EMAIL]" },
-    { label: "Questions about the content", detail: "[LEARNING CENTER NAME] - [LEARNING CENTER EMAIL]" }
+    { label: "Technical problems", detail: "IT Helpdesk - 555-0100 - helpdesk@example.org" },
+    { label: "Questions about the content", detail: "Learning Center - learningcenter@example.org" }
   ],
   resources: [
-    { text: "AI Acceptable Use Policy", url: "[POLICY LINK]" },
+    { text: "AI Acceptable Use Policy", url: "https://intranet.example.org/policies/ai-acceptable-use" },
     { text: "Quick reference (PDF)", file: "media/sample-job-aid.pdf" }
   ]
 }
@@ -177,12 +201,12 @@ help: {
 credits: {
   heading: "Credits",
   lines: [
-    "Designed by [DESIGNER NAME], [DESIGNER TEAM] ([DESIGNER EMAIL])",
-    "Created with help from AI tools and reviewed by [TEAM]."
+    "Designed by Course Designer, Training and Development team (training@example.org)",
+    "Created with help from AI tools and reviewed by the Training and Development team."
   ]
 }
 ```
-- **Fill in every `[PLACEHOLDER]`.** The packaging tool lists any left over.
+- **The template ships with made-up sample details:** "IT Helpdesk," "Learning Center," "Course Designer," phone 555-0100 and `example.org` addresses. **Replace every one with real details.** The packaging tool warns you about any that are left.
 - **Use shared mailboxes and service desks,** not a person's own email or phone, so the course doesn't go out of date when people change roles. Naming the designer in the credits is fine if they agree.
 - **Keep the AI-assistance line** if AI helped create the content (AI policy, Section 7).
 - **Routing:** technical problems go to the **Helpdesk**; curriculum questions go to the **Learning Center**.
@@ -197,12 +221,12 @@ image: { file: "media/forklift-check.png", alt: "Worker checking forklift tires 
 ```
 - **Alt text:** describe what matters in the picture in one sentence. For pure decoration use `alt: ""`.
 - **Size:** keep images under about **300 KB**, about 1600 pixels wide at most. In Paint: **Resize** → 1600 px wide → **Save as** JPEG (photos) or PNG (diagrams).
-- **Real people:** you need signed consent ([Approvals, roles and rights](11-approvals-roles-and-rights.md)). No AI-made images of real people.
+- **Real people:** ask the person before you include them ([Approvals, roles and rights](11-approvals-roles-and-rights.md)). No AI-made images of real people.
 - **Contrast:** don't put important text inside a picture. If you must, make it large and high-contrast, and repeat it in the alt text.
 
 ### Links to websites, policies, SharePoint or intranet pages
 ```js
-link: { text: "Safety policy", url: "https://[INTRANET ADDRESS]/safety-policy" }
+link: { text: "Safety policy", url: "https://intranet.example.org/safety-policy" }
 ```
 - Links open in a **new window** and say so to screen-reader users.
 - **⚠ Sign-in catch:** pages that need sign-in (SharePoint, intranet, policies) may not open inside the ADP Learning player, or may ask learners to sign in again. **Test every link in ADP Learning**; the packaging report lists them for you.
@@ -213,7 +237,7 @@ link: { text: "Safety policy", url: "https://[INTRANET ADDRESS]/safety-policy" }
 | Option | How | Good for | Watch out |
 |---|---|---|---|
 | **Packaged** (in the ZIP) | `file: { text: "Job aid (PDF)", file: "media/job-aid.pdf" }` | Always available, no sign-in | Must re-package to update it |
-| **Linked** | `link: { text: "Job aid", url: "https://[INTRANET]/job-aid.pdf" }` | One copy to update | Sign-in catch (above) |
+| **Linked** | `link: { text: "Job aid", url: "https://intranet.example.org/job-aid.pdf" }` | One copy to update | Sign-in catch (above) |
 
 **Accessibility:** make PDFs from Word with headings and **File → Save As → PDF**, and run Word's **Review → Check Accessibility** first.
 
@@ -225,7 +249,7 @@ link: { text: "Safety policy", url: "https://[INTRANET ADDRESS]/safety-policy" }
 
 - **Captions are required:** `.vtt` caption file for packaged video, or captions turned on at the source for linked video.
 - **Transcript:** add `transcript:` text, which appears under a "Transcript" button.
-- **Embedding** (playing a YouTube or Stream video *inside* the course screen) isn't supported. It would make the course connect to an outside service, which the security rules don't allow.
+- **Embedding** (playing a YouTube or Stream video *inside* the course screen) **isn't allowed.** It would make the course connect to an outside service. Link to the video instead.
 
 ### Audio and music
 - **Lesson audio:** `audio: { file: "media/tip.mp3", transcript: "…" }`. Always include a transcript.

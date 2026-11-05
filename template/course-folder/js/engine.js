@@ -10,6 +10,7 @@
   var CONTENT = window.COURSE_CONTENT || {};
   var THEME = {};
   var THEME_BASE = "";
+  var THEME_FAILED = false;
   var Scorm = window.Scorm;
 
   var DEFAULT_LABELS = {
@@ -17,7 +18,7 @@
     toHub: "Back to the main hall", check: "Check answer", saveExit: "Save & exit",
     retry: "Start over", review: "Review rooms", help: "Help", credits: "Credits",
     finish: "See results", musicOn: "Music: on", musicOff: "Music: off",
-    roomDone: "Room complete", showModel: "Show model answer", submitSurvey: "Send answers",
+    roomDone: "Room complete", showModel: "Show model answer", submitSurvey: "Send answer", skip: "Skip",
     close: "Close", confirmRetry: "Yes, start over", cancel: "Cancel"
   };
 
@@ -57,7 +58,7 @@
   function themeFile(f) { return f ? THEME_BASE + f : null; }
   function coreQuestions() {
     var list = [];
-    rooms().forEach(function (r) { (r.questions || []).forEach(function (q) { list.push({ q: q, room: r }); }); });
+    rooms().forEach(function (r) { (r.questions || []).forEach(function (q) { if (!q.survey) list.push({ q: q, room: r }); }); });
     return list;
   }
   function isPlaceholder(s) { return typeof s === "string" && /^\[[^\]]+\]$/.test(s.trim()); }
@@ -197,7 +198,7 @@
       : screen.type === "start" ? THEME.images && THEME.images.titleBackground : THEME.images && THEME.images.hubBackground;
     // Full address so the picture resolves from the page, not from the stylesheet.
     document.documentElement.style.setProperty("--screen-bg", bg ? 'url("' + new URL(themeFile(bg), document.baseURI).href + '")' : "none");
-    ({ start: renderStart, hub: renderHub, room: renderRoom, finish: renderFinish })[screen.type](screen);
+    ({ start: renderStart, hub: renderHub, room: renderRoom, finish: renderFinish, survey: renderStartSurvey })[screen.type](screen);
     var h = main.querySelector("h1");
     if (h) { h.setAttribute("tabindex", "-1"); h.focus(); }
     window.scrollTo(0, 0);
@@ -227,7 +228,12 @@
       el("p", { className: "lead", text: greet + ((CONTENT.intro && CONTENT.intro.text) || "") }),
       THEME.tagline ? el("p", { className: "tagline", text: THEME.tagline }) : null,
       el("button", { type: "button", className: "btn primary big", text: hasProgress ? label("resume") : label("start"),
-        onclick: function () { startMusic(); show(hasProgress ? resumeScreen : { type: "hub" }); } }),
+        onclick: function () {
+          startMusic();
+          var ss = CONTENT.startSurvey;
+          if (ss && ss.show && ss.questions && ss.questions.length && !state.startSurveyDone) show({ type: "survey" });
+          else show(hasProgress ? resumeScreen : { type: "hub" });
+        } }),
       CONTENT.intro && CONTENT.intro.tip ? el("p", { className: "small", text: CONTENT.intro.tip }) : null,
       el("p", { className: "version", text: "Version " + (SETTINGS.version || "") })
     ]));
@@ -348,8 +354,9 @@
   }
 
   function renderQuestion(body, q, room, nextBtn) {
-    var answered = state.answers[q.id];
     var bonus = isBonus(room.id);
+    if (q.survey) { renderSurveyQuestion(body, q, room, nextBtn); return; }
+    var answered = state.answers[q.id];
     if (bonus && state.rooms[room.id] && state.rooms[room.id].bonusAnswers) answered = state.rooms[room.id].bonusAnswers[q.id];
     var form = el("form", { className: "question" });
     var fs = el("fieldset", null, [el("legend", null, [el("h1", { text: q.prompt })])]);
@@ -397,6 +404,36 @@
     body.appendChild(form);
   }
 
+  function renderSurveyQuestion(body, q, room, nextBtn) {
+    var answered = state.survey[q.id];
+    var form = el("form", { className: "question" });
+    var fs = el("fieldset", null, [el("legend", null, [el("h1", { text: q.prompt })])]);
+    fs.appendChild(el("p", { className: "small", text: "Survey question: there's no right or wrong answer, and it doesn't affect your score." }));
+    q.choices.forEach(function (c) {
+      var id = "c_" + q.id + "_" + c.id;
+      fs.appendChild(el("div", { className: "choice" }, [el("input", { type: "radio", name: "choice", id: id, value: c.id, checked: answered === c.id, disabled: answered !== undefined }), el("label", { "for": id, text: c.text })]));
+    });
+    form.appendChild(fs);
+    var fb = el("div", { className: "feedback", role: "status", "aria-live": "polite" });
+    var send = el("button", { type: "submit", className: "btn primary", text: label("submitSurvey"), disabled: answered !== undefined });
+    form.appendChild(send); form.appendChild(fb);
+    if (answered !== undefined) fb.textContent = q.thanks || "Thanks for your answer.";
+    else questionShownAt = Date.now();
+    form.addEventListener("submit", function (ev) {
+      ev.preventDefault();
+      var picked = form.querySelector("input[name=choice]:checked");
+      if (!picked) { fb.textContent = "Choose an answer, or select Next to skip."; return; }
+      state.survey[q.id] = picked.value;
+      recordInteraction(q, room, picked.value, "survey");
+      Array.prototype.forEach.call(form.querySelectorAll("input"), function (i) { i.disabled = true; });
+      send.disabled = true;
+      fb.textContent = q.thanks || "Thanks for your answer.";
+      save(true);
+      nextBtn.focus();
+    });
+    body.appendChild(form);
+  }
+
   function renderPractice(body, p) {
     body.appendChild(el("h1", { text: "Practice" }));
     body.appendChild(el("p", { className: "lead", text: p.prompt }));
@@ -406,6 +443,17 @@
     var model = el("div", { className: "model", hidden: true }, [el("h2", { text: "Model answer" }), el("p", { text: p.modelAnswer })]);
     body.appendChild(el("button", { type: "button", className: "btn", text: label("showModel"), onclick: function () { model.hidden = false; model.querySelector("h2").setAttribute("tabindex", "-1"); model.querySelector("h2").focus(); } }));
     body.appendChild(model);
+  }
+
+  function renderStartSurvey() {
+    var ss = CONTENT.startSurvey;
+    var panel = el("div", { className: "panel" }, [el("h1", { text: ss.heading || "Before you start" })]);
+    if (ss.text) panel.appendChild(el("p", { className: "lead", text: ss.text }));
+    function done() { state.startSurveyDone = true; save(true); show({ type: "hub" }); }
+    panel.appendChild(surveyForm(ss, done, true));
+    panel.appendChild(el("div", { className: "actions" }, [el("button", { type: "button", className: "btn", text: label("skip"), onclick: done })]));
+    main.appendChild(panel);
+    main.appendChild(toolbar());
   }
 
   function renderFinish() {
@@ -422,7 +470,7 @@
       if (perfect() && bonusRooms().some(function (b) { return b.unlock === "perfectScore"; })) panel.appendChild(el("p", { className: "perfect", text: f.perfectText || "" }));
     }
     var sv = CONTENT.survey;
-    if (sv && sv.show && sv.questions && sv.questions.length && !state.surveyDone) panel.appendChild(surveyForm(sv));
+    if (sv && sv.show && sv.questions && sv.questions.length && !state.surveyDone) panel.appendChild(surveyForm(sv, function () { state.surveyDone = true; save(true); }));
     panel.appendChild(el("div", { className: "actions" }, [
       el("button", { type: "button", className: "btn primary", text: label("review"), onclick: function () { show({ type: "hub" }); } }),
       el("button", { type: "button", className: "btn", text: label("retry"), onclick: confirmRetry })
@@ -431,8 +479,8 @@
     main.appendChild(toolbar());
   }
 
-  function surveyForm(sv) {
-    var form = el("form", { className: "survey" }, [el("h2", { text: sv.heading || "Survey" })]);
+  function surveyForm(sv, onDone, noHeading) {
+    var form = el("form", { className: "survey" }, [noHeading ? null : el("h2", { text: sv.heading || "Survey" })]);
     sv.questions.forEach(function (q) {
       var fs = el("fieldset", null, [el("legend", { text: q.prompt })]);
       q.choices.forEach(function (c) {
@@ -448,8 +496,8 @@
         var p = form.querySelector('input[name="' + q.id + '"]:checked');
         if (p) { state.survey[q.id] = p.value; questionShownAt = 0; recordInteraction(q, null, p.value, "survey"); }
       });
-      state.surveyDone = true; save(true);
       form.replaceWith(el("p", { className: "small", role: "status", text: "Thank you. Your answers were sent." }));
+      onDone();
     });
     return form;
   }
@@ -483,7 +531,7 @@
   function confirmRetry() {
     var d;
     var yes = el("button", { type: "button", className: "btn primary", text: label("confirmRetry"), onclick: function () {
-      var keep = { best: state.best, passedEver: state.passedEver, completed: state.completed, survey: state.survey, surveyDone: state.surveyDone, seenFinish: state.seenFinish };
+      var keep = { best: state.best, passedEver: state.passedEver, completed: state.completed, survey: state.survey, surveyDone: state.surveyDone, startSurveyDone: state.startSurveyDone, seenFinish: state.seenFinish };
       state = freshState(state.attempt + 1);
       Object.keys(keep).forEach(function (k) { state[k] = keep[k]; });   // completion and best score are kept
       save(true);
@@ -546,6 +594,7 @@
       });
       (r.questions || []).forEach(function (q) {
         dup(q.id, "A question in " + r.id);
+        if (q.survey) { if (!(q.choices || []).length) issues.push("Survey question " + q.id + " has no choices."); return; }
         var cids = (q.choices || []).map(function (c) { return c.id; });
         if (cids.indexOf(q.correct) < 0) issues.push("Question " + q.id + ": the correct answer \"" + q.correct + "\" isn't one of its choice ids.");
         if (!q.feedbackCorrect || !q.feedbackIncorrect) issues.push("Question " + q.id + " is missing feedback.");
@@ -557,6 +606,8 @@
         issues.push("Bonus room " + b.id + " has an unknown unlock rule: \"" + u + "\".");
     });
     (CONTENT.easterEggs || []).forEach(function (e) { dup(e.id, "An easter egg"); });
+    [CONTENT.startSurvey, CONTENT.survey].forEach(function (sv) { if (sv && sv.questions) sv.questions.forEach(function (q) { dup(q.id, "A survey question"); }); });
+    if (!coreQuestions().length) issues.push("There are no scored questions in the required rooms.");
     var sp = SETTINGS.scoring && SETTINGS.scoring.passingPercent;
     if (sp !== null && sp !== undefined && !(sp > 0 && sp <= 100)) issues.push("passingPercent must be a number from 1 to 100, or null.");
     return issues;
@@ -574,7 +625,32 @@
   }
 
   /* ------------------------------ start up ------------------------------ */
+  // Plain-language message when an edited file has a typing mistake.
+  function loadProblem() {
+    var errs = window.COURSE_LOAD_ERRORS || [];
+    var missing = [];
+    if (!window.COURSE_SETTINGS) missing.push("course/settings.js");
+    if (!window.COURSE_CONTENT) missing.push("course/content.js");
+    if (THEME_FAILED) missing.push(THEME_BASE + "theme.js");
+    if (!errs.length && !missing.length) return null;
+    var where = errs.length ? errs.map(function (x) { return x.file + (x.line ? " (around line " + x.line + ")" : ""); }) : missing;
+    return where.filter(function (v, i, a) { return a.indexOf(v) === i; });
+  }
+
+  function showLoadProblem(where) {
+    var m = document.getElementById("main");
+    m.textContent = "";
+    m.appendChild(el("div", { className: "panel" }, [
+      el("h1", { text: "This course has a typing mistake" }),
+      el("p", { className: "lead", text: "A file couldn't be read. Check:" }),
+      el("ul", null, where.map(function (w) { return el("li", { text: w }); })),
+      el("p", { text: "Common causes: a missing quote mark (\"), a missing comma between items, or a missing } or ]. Undo your last change, or compare with the original template file." })
+    ]));
+  }
+
   function start() {
+    var problem = loadProblem();
+    if (problem) { showLoadProblem(problem); return; }
     applyTheme();
     setupMusic();
     root = document.getElementById("app");
@@ -607,8 +683,8 @@
     THEME_BASE = "themes/" + name + "/";
     var s = document.createElement("script");
     s.src = THEME_BASE + "theme.js";
-    s.onload = function () { THEME = window.COURSE_THEME || {}; start(); };
-    s.onerror = function () { THEME = {}; start(); };
+    s.onload = function () { THEME = window.COURSE_THEME || {}; if (!window.COURSE_THEME) THEME_FAILED = true; start(); };
+    s.onerror = function () { THEME = {}; THEME_FAILED = true; start(); };
     document.head.appendChild(s);
   }
 

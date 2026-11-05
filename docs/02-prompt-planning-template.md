@@ -58,7 +58,7 @@ Before you answer, ask me up to 3 questions if anything is unclear.
 | 7 | Format | Table: question, choices A–D, correct letter, feedback for correct, feedback for incorrect. |
 | 8 | Example | "A coworker asks you to paste a student's grade report into an AI tool to summarize it. What should you do?" |
 | 9 | Review | Checker: course owner, against the AI rules page. Compliance review before launch. |
-| 10 | Disclosure | ☑ Yes. The game's credits screen says "Created with help from AI tools and reviewed by [TEAM]." |
+| 10 | Disclosure | ☑ Yes. The game's credits screen says "Created with help from AI tools and reviewed by the Training and Development team." |
 
 **The prompt typed into Copilot:**
 
@@ -79,7 +79,7 @@ Before you answer, ask me up to 3 questions if anything is unclear.
 ```
 
 **A typical review loop (illustration):**
-1. Copilot asked whether the feedback should name the policy. Answer: "Yes, as [POLICY LINK]."
+1. Copilot asked whether the feedback should name the policy. Answer: "Yes, as the AI Acceptable Use Policy link."
 2. The first draft had one question with two correct answers. Fix request: "Question 2 has two right answers. Rewrite choice C so only B is correct."
 3. One feedback line said a made-up rule ("you may share data with your manager's approval"). The checker removed it because that isn't in the policy.
 4. The final questions went into the game's content file (see the content update guide). Each change was noted in the change log.

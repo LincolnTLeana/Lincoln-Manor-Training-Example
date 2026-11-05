@@ -14,6 +14,26 @@ window.COURSE_CONTENT = {
     tip: "Your progress is saved when you choose Save & exit."
   },
 
+  /* ---------- Survey at the start (optional, not scored) ----------
+     Shown once, after the learner selects Start. Learners can skip it.
+     To turn it off: show: false.  To remove a question, delete its { ... } block. */
+  startSurvey: {
+    show: true,
+    heading: "Your starting point",
+    text: "One quick question before you begin. There's no right or wrong answer.",
+    questions: [
+      {
+        id: "survey_familiarity",
+        prompt: "How familiar are you with Microsoft Copilot?",
+        choices: [
+          { id: "beginner", text: "Beginner: I've rarely or never used it" },
+          { id: "intermediate", text: "Intermediate: I use it now and then" },
+          { id: "advanced", text: "Advanced: I use it most days" }
+        ]
+      }
+    ]
+  },
+
   /* ---------- Required rooms (count toward completion and score) ----------
      To ADD a room: copy one whole { ... } block, paste it after the last one,
      add a comma between blocks, and give it a new id (for example "room5").
@@ -42,7 +62,7 @@ window.COURSE_CONTENT = {
             "Other tools need approval first.",
             "Read the policy: see the link below."
           ],
-          link: { text: "AI Acceptable Use Policy", url: "[POLICY LINK]" }
+          link: { text: "AI Acceptable Use Policy", url: "https://intranet.example.org/policies/ai-acceptable-use" }
         }
       ],
       questions: [
@@ -220,6 +240,19 @@ window.COURSE_CONTENT = {
           correct: "a",
           feedbackCorrect: "Correct. Your manager reviews it before it's used.",
           feedbackIncorrect: "If you can't verify it, your manager reviews and approves it first."
+        },
+        {
+          // A SURVEY question inside a room: add  survey: true  and leave out
+          // "correct" and the feedback lines. It never affects the score.
+          id: "survey_confidence",
+          survey: true,
+          prompt: "How confident do you feel checking an AI tool's output?",
+          choices: [
+            { id: "1", text: "Not yet confident" },
+            { id: "2", text: "Somewhat confident" },
+            { id: "3", text: "Confident" }
+          ],
+          thanks: "Thanks! Your answer helps us improve this training."
         }
       ]
     },
@@ -232,7 +265,7 @@ window.COURSE_CONTENT = {
           heading: "Say when AI helped",
           summary: "Published training says when AI tools helped create it.",
           bullets: [
-            "Add a short line, such as \"Created with help from AI tools and reviewed by [TEAM].\"",
+            "Add a short line, such as \"Created with help from AI tools and reviewed by our team.\"",
             "Not needed for spell-checks or brainstorming.",
             "AI never decides anything about a person."
           ]
@@ -327,20 +360,20 @@ window.COURSE_CONTENT = {
     { id: "egg1", location: "hub", label: "A loose floorboard", message: "You found a hidden note: \"Check every output!\"" }
   ],
 
-  /* ---------- Optional survey (not scored; answers go to ADP Learning) ----------
-     Set show to false to skip it. Never ask for names, emails or personal details:
-     ADP Learning already knows who the learner is. */
+  /* ---------- Survey at the end (optional, not scored) ----------
+     Shown on the finish screen. Answers go to ADP Learning.
+     Never ask for names, emails or personal details: ADP Learning already
+     knows who the learner is. To turn it off: show: false. */
   survey: {
     show: true,
     heading: "Two quick questions",
     questions: [
       {
-        id: "survey_familiarity",
-        prompt: "How familiar were you with AI assistants before this course?",
+        id: "survey_badges",
+        prompt: "Would you like to earn digital badges for future trainings?",
         choices: [
-          { id: "beginner", text: "Beginner" },
-          { id: "intermediate", text: "Intermediate" },
-          { id: "advanced", text: "Advanced" }
+          { id: "yes", text: "Yes, I'm interested" },
+          { id: "no", text: "No, thanks" }
         ]
       },
       {
@@ -364,27 +397,29 @@ window.COURSE_CONTENT = {
   },
 
   /* ---------- Help (support contacts) ----------
-     Add, remove or change rows. Use shared mailboxes or service desks, not a
-     person's own email. */
+     The sample names, phone (555-0100) and example.org addresses are made up:
+     replace them with your real ones. Add, remove or change rows. Use shared
+     mailboxes or service desks, not a person's own email. */
   help: {
     heading: "Need help?",
     contacts: [
-      { label: "Technical problems (course won't load, progress not saved)", detail: "[HELPDESK NAME] - [HELPDESK PHONE] - [HELPDESK EMAIL]" },
-      { label: "Questions about the course content", detail: "[LEARNING CENTER NAME] - [LEARNING CENTER EMAIL]" }
+      { label: "Technical problems (course won't load, progress not saved)", detail: "IT Helpdesk - 555-0100 - helpdesk@example.org" },
+      { label: "Questions about the course content", detail: "Learning Center - learningcenter@example.org" }
     ],
     resources: [
-      { text: "AI Acceptable Use Policy", url: "[POLICY LINK]" },
+      { text: "AI Acceptable Use Policy", url: "https://intranet.example.org/policies/ai-acceptable-use" },
       { text: "Quick reference (PDF)", file: "media/sample-job-aid.pdf" }
     ]
   },
 
-  /* ---------- Credits ---------- */
+  /* ---------- Credits (designer credit and AI disclosure) ----------
+     Replace the sample names and email with real ones. */
   credits: {
     heading: "Credits",
     lines: [
-      "Designed by [DESIGNER NAME], [DESIGNER TEAM] ([DESIGNER EMAIL])",
-      "Subject expert review: [SUBJECT EXPERT TEAM]",
-      "Created with help from AI tools and reviewed by [TEAM].",
+      "Designed by Course Designer, Training and Development team (training@example.org)",
+      "Subject expert review: Subject Expert Team",
+      "Created with help from AI tools and reviewed by the Training and Development team.",
       "Version shown below the title."
     ]
   }
