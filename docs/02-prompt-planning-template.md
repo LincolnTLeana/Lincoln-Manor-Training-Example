@@ -11,7 +11,7 @@
 |---|---|---|
 | 1 | **Audience:** who will take this training? What do they already know? | |
 | 2 | **Outcome:** after the training, what should they be able to *do*? (Start with a verb: "identify", "choose", "complete".) | |
-| 3 | **Data check:** does anything I plan to paste include internal know-how, student or employee information, ADP Learning data, passwords, or unreleased content? (R5–R8) *If yes, clean it up first using the checklist in the [AI rules](01-ai-rules-for-course-builders.md), or leave it out.* | ☐ Nothing restricted ☐ Cleaned up |
+| 3 | **Data check:** does anything I plan to paste include personal information (student records, employee details, ADP Learning data) or passwords? (R6, R8) *If yes, remove it first using the checklist in the [AI rules](01-ai-rules-for-course-builders.md).* Internal documents are OK **in Copilot only** (R21). | ☐ No personal information ☐ Removed |
 | 4 | **Tool:** am I using an approved tool, on a work device, signed in with my work email? (R1–R4) | ☐ Microsoft Copilot ☐ Other approved tool: ____ |
 | 5 | **Task:** what exactly am I asking for? (One task per prompt works best.) | |
 | 6 | **Limits:** word count, reading level, tone, accessibility needs. *Course standard: under 100 words per screen; one summary sentence plus up to 3 bullets.* | |
